@@ -1,5 +1,5 @@
-#ifndef __PIKA_CONF_H__
-#define __PIKA_CONF_H__
+#ifndef PIKA_CONF_H_
+#define PIKA_CONF_H_
 #include <pthread.h>
 #include "stdlib.h"
 #include <string>
@@ -44,11 +44,14 @@ public:
   }
   std::string compression()     { RWLock l(&rwlock_, false); return compression_; }
   int target_file_size_base()   { RWLock l(&rwlock_, false); return target_file_size_base_; }
+  int max_background_flushes()  { RWLock l(&rwlock_, false); return max_background_flushes_; }
+  int max_background_compactions()   { RWLock l(&rwlock_, false); return max_background_compactions_; }
+  int max_cache_files()          { RWLock l(&rwlock_, false); return max_cache_files_; }
   int expire_logs_nums()        { RWLock l(&rwlock_, false); return expire_logs_nums_; }
   int expire_logs_days()        { RWLock l(&rwlock_, false); return expire_logs_days_; }
   std::string conf_path()       { RWLock l(&rwlock_, false); return conf_path_; }
   bool readonly()               { RWLock l(&rwlock_, false); return readonly_; }
-  int maxconnection()           { RWLock l(&rwlock_, false); return maxconnection_; }
+  int maxclients()           { RWLock l(&rwlock_, false); return maxclients_; }
   int root_connection_num()     { RWLock l(&rwlock_, false); return root_connection_num_; }
   int slowlog_slower_than()     { RWLock l(&rwlock_, false); return slowlog_log_slower_than_; }
 
@@ -98,7 +101,7 @@ public:
   }
   void SetMaxConnection(const int value) {
     RWLock l(&rwlock_, true);
-    maxconnection_ = value;
+    maxclients_ = value;
   }
   void SetRootConnectionNum(const int value) {
     RWLock l(&rwlock_, true);
@@ -138,13 +141,17 @@ private:
 
   //char pidfile_[PIKA_WORD_SIZE];
   std::string compression_;
-  int maxconnection_;
+  int maxclients_;
   int root_connection_num_;
   int slowlog_log_slower_than_;
   int expire_logs_days_;
   int expire_logs_nums_;
   bool readonly_;
   std::string conf_path_;
+  int max_background_flushes_;
+  int max_background_compactions_;
+  int max_cache_files_;
+
   //char username_[30];
   //char password_[30];
 

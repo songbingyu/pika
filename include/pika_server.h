@@ -114,6 +114,7 @@ public:
   void MinusMasterConnection();
   void PlusMasterConnection();
   bool ShouldAccessConnAsMaster(const std::string& ip);
+  void SyncError();
   void RemoveMaster();
   bool WaitingDBSync();
   void NeedWaitDBSync();
@@ -150,14 +151,12 @@ public:
     time_t start_time;
     std::string s_start_time;
     std::string path;
-    std::string tmp_path;
     uint32_t filenum;
     uint64_t offset;
     BGSaveInfo() : bgsaving(false), filenum(0), offset(0){}
     void Clear() {
       bgsaving = false;
       path.clear();
-      tmp_path.clear();
       filenum = 0;
       offset = 0;
     }
@@ -170,17 +169,11 @@ public:
     slash::MutexLock l(&bgsave_protector_);
     return bgsave_info_.bgsaving;
   }
-  slash::Mutex* bgsave_protector() {
-    return &bgsave_protector_;
-  }
   void Bgsave();
   bool Bgsaveoff();
   bool RunBgsaveEngine(const std::string path);
-  // need bgsave_protector protect
-  void ClearBgsave() {
-    bgsave_info_.Clear();
-  }
   void FinishBgsave() {
+    slash::MutexLock l(&bgsave_protector_);
     bgsave_info_.bgsaving = false;
   }
 
@@ -239,6 +232,7 @@ public:
   }
   void KeyScan();
   void RunKeyScan();
+  void StopKeyScan();
   
 
 /*
@@ -246,7 +240,7 @@ public:
  */
   void ClientKillAll();
   int ClientKill(const std::string &ip_port);
-  int64_t ClientList(std::vector< std::pair<int, std::string> > *clients = NULL);
+  int64_t ClientList(std::vector<ClientInfo> *clients = NULL);
 
 /*
  * Monitor used
@@ -275,6 +269,7 @@ void SignalNextBinlogBGSerial();
   void incr_accumulative_connections() {
     ++accumulative_connections_;  
   }
+  void ResetStat();
   slash::RecordMutex mutex_record_;
 
 private:
@@ -320,6 +315,10 @@ private:
   static void DoBgsave(void* arg);
   bool InitBgsaveEnv();
   bool InitBgsaveEngine();
+  void ClearBgsave() {
+    slash::MutexLock l(&bgsave_protector_);
+    bgsave_info_.Clear();
+  }
 
 
   /*
@@ -336,7 +335,8 @@ private:
   /*
    * DBSync use
    */
-  std::unordered_set<std::string> db_sync_slaves;
+  slash::Mutex db_sync_protector_;
+  std::unordered_set<std::string> db_sync_slaves_;
   void TryDBSync(const std::string& ip, int port, int32_t top);
   void DBSync(const std::string& ip, int port);
   static void DoDBSync(void* arg);

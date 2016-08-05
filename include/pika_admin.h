@@ -1,5 +1,5 @@
-#ifndef __PIKA_ADMIN_H__
-#define __PIKA_ADMIN_H__
+#ifndef PIKA_ADMIN_H_
+#define PIKA_ADMIN_H_
 #include "pika_command.h"
 #include "pika_client_conn.h"
 
@@ -144,15 +144,19 @@ public:
     kInfoStats,
     kInfoReplication,
     kInfoKeyspace,
+    kInfoBgstats,
+    kInfoLog,
+    kInfoData,
     kInfoAll
   };
 
-  InfoCmd() : rescan_(false) {
+  InfoCmd() : rescan_(false), off_(false) {
   }
   virtual void Do();
 private:
   InfoSection info_section_;
   bool rescan_; //whether to rescan the keyspace
+  bool off_;
 
   const static std::string kAllSection;
   const static std::string kServerSection;
@@ -160,10 +164,13 @@ private:
   const static std::string kStatsSection;
   const static std::string kReplicationSection;
   const static std::string kKeyspaceSection;
+  const static std::string kLogSection;
+  const static std::string kDataSection;
 
   virtual void DoInitial(PikaCmdArgsType &argvs, const CmdInfo* const ptr_info);
   virtual void Clear() {
     rescan_ = false;
+    off_ = false;
   }
    
   void InfoServer(std::string &info);
@@ -171,6 +178,8 @@ private:
   void InfoStats(std::string &info);
   void InfoReplication(std::string &info);
   void InfoKeyspace(std::string &info);
+  void InfoLog(std::string &info);
+  void InfoData(std::string &info);
 };
 
 class ShutdownCmd : public Cmd {
@@ -193,6 +202,7 @@ private:
   void ConfigGet(std::string &ret);
   void ConfigSet(std::string &ret);
   void ConfigRewrite(std::string &ret);
+  void ConfigResetstat(std::string &ret);
 };
 
 class MonitorCmd : public Cmd {

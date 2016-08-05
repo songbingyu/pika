@@ -17,13 +17,19 @@ public:
   virtual ~PikaWorkerThread();
   virtual void CronHandle();
 
-  int64_t ThreadClientList(std::vector< std::pair<int, std::string> > *clients = NULL);
+  int64_t ThreadClientList(std::vector<ClientInfo> *clients = NULL);
   bool ThreadClientKill(std::string ip_port = "");
   int ThreadClientNum();
 
   uint64_t thread_querynum() {
     slash::RWLock(&rwlock_, false);
     return thread_querynum_;
+  }
+
+  void ResetThreadQuerynum() {
+    slash::RWLock(&rwlock_, true);
+    thread_querynum_ = 0;
+    last_thread_querynum_ = 0;
   }
 
   uint64_t last_sec_thread_querynum() {

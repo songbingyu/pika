@@ -28,7 +28,7 @@ Pika is a persistent huge storage service , compatible  with the vast majority o
 ~~~  
 	a. sudo wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
 	b. yum install --nogpgcheck devtoolset-1.1
-	c. scl enable devetoolset-1.1 bash
+	c. scl enable devtoolset-1.1 bash
 ~~~
 4.Fetch the source code: 
 
@@ -64,6 +64,19 @@ The PIKA_SOURCE stands for pika source code's root directory;
 The __VERSION represents the OS's version, such as 6.2, 5.4...  
 The RPATH is defined in pika's Makefile
 
+## Quickstart and Try
+  You can try to use our pre-build binary versions. For now, only Centos5 and Centos6 are supported. The binary ones can be found at [the release page](https://github.com/Qihoo360/pika/releases) which are called pikaX.Y.Z_centosK_bin.tar.gz.
+
+```
+# 1. unzip file
+tar zxf pikaX.Y.Z_centosK_bin.tar.gz
+# 2. change working directory to output
+#     note: we should in this directory, caz the RPATH is ./lib;
+cd output
+# 3. run pika:
+./bin/pika -c conf/pika.conf
+```
+
 ##Performance
 
 ```
@@ -84,13 +97,24 @@ Test:
 		Client pull data by get, hget, lindex, zscore, smembers, 25000000 keys stored in pika and each interface has 5000000 key range
 		result: 170000 qps
 
-```		
+```
+
+##UserList
+
+<img src="http://i.imgur.com/dcHpCm4.png" height = "100" width = "120" alt="Qihoo">
+<img src="http://i.imgur.com/jjZczkN.png" height = "100" width = "120" alt="Weibo">
+<img src="http://i.imgur.com/kHqACbn.png" height = "100" width = "120" alt="Apus">
+<img src="http://i.imgur.com/2c57z8U.png" height = "100" width = "120" alt="Ffan">
+
+[More](https://github.com/Qihoo360/pika/blob/master/USERS.md)
+
+ 
 ##Documents
 
 1. [Wiki](https://github.com/Qihoo360/pika/wiki)
 
 ##Contact Us
 
-Mail: songzhao@360.cn
+Mail: g-infra-bada@360.cn
 
-QQ: 294254078
+QQ group: 294254078
